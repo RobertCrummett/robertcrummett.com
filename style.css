@@ -1,5 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+*, *::before, *::after {
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+}
 
 body {
     font-family: 'Open Sans', Arial, sans-serif;
+    color: #000;
+    background-color: #e0e0e0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+    cursor: pointer;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 100%;
+    background-color: #666;
+}
+
+.navbar button {
+
 }
