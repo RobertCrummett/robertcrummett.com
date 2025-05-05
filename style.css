@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
-*, *::before, *::after {
+* {
     margin: 0;
     border: 0;
     box-sizing: border-box;
