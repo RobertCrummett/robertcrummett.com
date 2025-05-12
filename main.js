@@ -2,44 +2,67 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(
-    35, window.innerWidth / window.innerHeight, 0.1, 1000
-)
-camera.position.z = 10
 
-// Create custom geometry
+const textureLoader = new THREE.TextureLoader();
+
 const geometry = new THREE.BoxGeometry(1, 1, 1)
 const torusKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16)
 const planeGeometry = new THREE.PlaneGeometry(1, 1)
+const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32)
+const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32)
 
-const material = new THREE.MeshPhysicalMaterial()
-material.color = new THREE.Color('green')
-material.metalness = 0.1
-material.roughness = 0
-material.reflectivity = 0
-material.clearcoat = 0.4
+const grassAlbedo = textureLoader.load('static/textures/whispy-grass-meadow-bl/wispy-grass-meadow_albedo.png')
+const grassAo = textureLoader.load('static/textures/whispy-grass-meadow-bl/wispy-grass-meadow_ao.png')
+const grassHeight = textureLoader.load('static/textures/whispy-grass-meadow-bl/wispy-grass-meadow_height.png')
+const grassMetallic = textureLoader.load('static/textures/whispy-grass-meadow-bl/wispy-grass-meadow_metallic.png')
+const grassNormal = textureLoader.load('static/textures/whispy-grass-meadow-bl/wispy-grass-meadow_normal-ogl.png')
+const grassRoughness = textureLoader.load('static/textures/whispy-grass-meadow-bl/wispy-grass-meadow_roughness.png')
 
-const mesh = new THREE.Mesh(geometry, material)
-const mesh2 = new THREE.Mesh(torusKnotGeometry, material)
-mesh2.position.x = 1.5
-const mesh3 = new THREE.Mesh(planeGeometry, material)
-mesh3.position.x = -1.5
+const material = new THREE.MeshStandardMaterial()
+material.map = grassAlbedo
+material.roughnessMap = grassRoughness
+material.roughness = 1
+material.metalnessMap = grassMetallic
+material.metalness = 1
+material.normalMap = grassNormal
+// material.displacementMap = grassHeight
+// material.displacementScale = 0.1
+material.aoMap = grassAo;
+material.aoMapIntensity = 0.5;
 
-scene.add(mesh)
-scene.add(mesh2)
-scene.add(mesh3)
+const cube = new THREE.Mesh(geometry, material)
+const knot = new THREE.Mesh(torusKnotGeometry, material)
+knot.position.x = 1.5
+const plane = new THREE.Mesh(planeGeometry, material)
+plane.position.x = -1.5
+const sphere = new THREE.Mesh()
+sphere.geometry = sphereGeometry
+sphere.material = material
+sphere.position.y = 1.5
+const cylinder = new THREE.Mesh()
+cylinder.geometry = cylinderGeometry
+cylinder.material = material
+cylinder.position.y = -1.5
+
+const group = new THREE.Group()
+group.add(sphere, cylinder, cube, knot, plane)
+scene.add(group)
 
 const light = new THREE.AmbientLight(0xffffff, 1)
 scene.add(light)
 
-const pointLight = new THREE.PointLight(0xffffff, 10)
-pointLight.position.set(1, 1, 1)
+const pointLight = new THREE.PointLight(0xffffff, 100)
+pointLight.position.set(5, 5, 5)
 scene.add(pointLight)
 
 const axesHelper = new THREE.AxesHelper()
 axesHelper.setColors(0xff0000, 0x00ff00, 0x0000ff)
 scene.add(axesHelper)
 
+const camera = new THREE.PerspectiveCamera(
+    35, window.innerWidth / window.innerHeight, 0.1, 200
+)
+camera.position.z = 10
 const canvas = document.querySelector('canvas.threejs')
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
@@ -51,7 +74,6 @@ renderer.setPixelRatio(maxPixelRatio)
 
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-// controls.autoRotate = true
 
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight)
@@ -59,17 +81,12 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix()
 })
 
-const clock = new THREE.Clock()
-let previousTime = 0
-
 const renderLoop = () => {
-    const currentTime = clock.getElapsedTime()
-    const delta = currentTime - previousTime
-    previousTime = currentTime
-
-    // cubeMesh.rotation.y += THREE.MathUtils.degToRad(1) * delta * 20
-    // cubeMesh.scale.x = Math.sin(currentTime)
-
+    group.children.forEach((child) => {
+        if (child instanceof THREE.Mesh) {
+            child.rotation.y += 0.001
+        }
+    })
     controls.update()
     renderer.render(scene, camera)
     window.requestAnimationFrame(renderLoop)
