@@ -1,54 +1,354 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
-
 * {
     margin: 0;
-    border: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Open Sans', Arial, sans-serif;
+    font-family: Arial, sans-serif;
     color: #000;
     background-color: #fdfdfd;
-    margin: 2rem;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-.definitions-container {
-    gap: 2rem;
-    padding-bottom: 1rem;
-}
-
-.definition-card {
-    border: 2px solid #ccc;
-    border-radius: 6px;
+.navbar {
+    background-color: #333;
     padding: 1rem;
-    background-color: #efefef;
 }
 
-.definition-header {
+.navbar ul {
+    list-style-type: none;
     display: flex;
-    align-items: flex-end;
-    gap: 1rem;
+    justify-content: center;
+    gap: 1.5rem;
 }
 
-.definition-header h2,h3 {
-    line-height: 1;
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #555;
+}
+
+.navbar a.active {
+    background-color: #fdb7b9;
+    color: #333;
+}
+
+.navbar a.active:hover {
+    background-color: #fc9a9d;
+}
+
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+main h1 {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 0 1rem;
+    }
+
+    pre {
+        padding: 1rem;
+    }
+
+    .footer-content {
+        gap: 0.25rem;
+    }
+    
+    .footer-nav a,
+    .footer-contact a {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .footer-copyright {
+        font-size: 0.7rem;
+    }
+}
+
+footer {
+    background-color: #333;
+    padding: 0.75rem 0;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.footer-nav ul {
+    list-style-type: none;
+    display: flex;
+    gap: 0.5rem;
     margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
-.definition-header h3 {
-    padding-bottom: 0.04rem;
+.footer-nav li {
+    display: flex;
+    align-items: center;
+}
+
+.footer-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.25rem 0.75rem 0.25rem 0.75rem;
+    border-radius: 4px;
+    transition: all 0.3s;
+    background-color: transparent;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.footer-nav a:hover {
+    background-color: #555;
+}
+
+
+.footer-nav a.active {
+    background-color: #fdb7b9;
+    color: #333;
+}
+
+.footer-nav a.active:hover {
+    background-color: #fc9a9d;
+}
+
+.footer-copyright {
+    width: 100%;
+    text-align: center;
+    font-size: 0.75rem;
+    padding-top: 0;
+    margin-top: 0.1rem;
+    color: #aaa;
+}
+
+.footer-copyright p {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.code-project {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem auto;
+    max-width: 1200px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.code-actions {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.download-btn,.git-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.download-btn {
+    background-color: #fdb7b9;
+    color: #333;
+}
+
+.git-btn {
+    background-color: #333;
+    color: white;
+}
+
+.download-btn:hover {
+    background-color: #fc9a9d;
+}
+
+.git-btn:hover {
+    background-color: #555;
+}
+
+pre {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+code {
+    font-family: 'Courier New', monospace;
+}
+
+.contact-emailtext {
+    margin: 0.5rem;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.contact-container {
+    max-width: 800px;
+    margin: 0rem auto;
+    padding: 0 1rem;
+}
+
+.contact-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.contact-card h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.contact-card p {
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.contact-icon {
+    font-size: 1.2rem;
+}
+
+.email-btn {
+    background-color: #fdb7b9;
+    color: #333;
+}
+
+.linkedin-btn {
+    background-color: #888;
+    color: white;
+}
+
+.github-btn {
+    background-color: #333;
+    color: white;
+}
+
+.contact-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.email-btn:hover {
+    background-color: #fc9a9d;
+}
+
+.linkedin-btn:hover {
+    background-color: #666;
+}
+
+.github-btn:hover {
+    background-color: #111;
+}
+
+@media (max-width: 600px) {
+    .contact-card {
+        padding: 1.5rem;
+    }
+    
+    .contact-btn {
+        padding: 0.75rem;
+    }
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.code-project {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
     font-style: italic;
 }
 
-.definition-body ol {
-    font-size: 18px;
-    margin-top: 0.75rem;
-    padding-left: 1.5rem;
+.refresh-btn {
+    display: block;
+    margin: 2rem auto;
+    padding: 0.5rem 1rem;
+    background-color: #fdb7b9;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-.definition-body li {
-    margin: 0.3rem 0;
+.refresh-btn:hover {
+    background-color: #fc9a9d;
+    transform: translateY(-2px);
 }
