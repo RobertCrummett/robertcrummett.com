@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div id="${poster.id}-viewer" class="poster-viewer"></div>
 
-            <div class="code-actions">
+            <div class="poster-btn-container">
                 <a href="${poster.pdfPath}" class="poster-btn download-btn" download>
                     Download Full Poster (PDF)
                 </a>
@@ -54,3 +54,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+console.log("Hello from gallery!");

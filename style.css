@@ -28,14 +28,6 @@ body {
     gap: 1.5rem;
 }
 
-.title-icon {
-    width: 1em;
-    height: 1em;
-    vertical-align: middle;
-    margin-right: 0.5rem;
-    fill: #fdb7b9;
-}
-
 .navbar a {
     color: white;
     text-decoration: none;
@@ -362,7 +354,7 @@ code {
 }
 
 .poster-container {
-    background-color: #ddd;
+    background-color: #eee;
     padding: 1rem;
     padding-top: 0.5rem;
     padding-bottom: 0;
