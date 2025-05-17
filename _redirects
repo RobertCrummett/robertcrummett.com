@@ -1,5 +1,5 @@
-/home     /index.html    200
-/about    /about.html    200
-/projects /projects.html 200
-/code     /code.html     200
-/contact  /contact.html  200
+/index.html         /
+/about.html         /about
+/projects.html      /projects
+/code.html          /code
+/contact.html       /contact
