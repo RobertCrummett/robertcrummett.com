@@ -7,45 +7,95 @@
 #define TRIGTERMS 7
 #define PI 3.141592653589793
 
-double *r = NULL;
-double *ri = NULL;
-double *d = NULL;
-double *ps = NULL;
-int *ips = NULL;
-double *am = NULL;
-double *bm = NULL;
-double *pm = NULL;
+#ifndef NDEBUG
+#define ASSERT(x) do { if (!(x)) __builtin_trap(); } while (0)
+#else // NDEBUG defined
+#define ASSERT(x) do {} while (0)
+#endif // NDEBUG defined?
 
-float *ctheta = NULL;
-float *stheta = NULL;
-float *cphi = NULL;
-float *sphi = NULL;
+struct State {
+    double *r;
+    double *ri;
+    double *d;
+    double *ps;
+    double *am;
+    double *bm;
+    double *pm;
+    double *geoid;
+    int *ips;
+    int order; 
+} state;
 
-void prepare_coefficients(int n) {
+struct Grid {
+    double p_start;
+    double t_start;
+    double p_count;
+    double t_count;
+    double p_cellsize;
+    double t_cellsize;
+} grid;
+
+#define GRID_P_START 1.0
+#define GRID_T_START -180.0
+#define GRID_P_END 179.0
+#define GRID_T_END 178.0
+#define GRID_NP 90
+#define GRID_NT 180
+
+static void init_grid(void) {
+    grid.p_start = GRID_P_START;
+    grid.t_start = GRID_T_START;
+
+    grid.p_count = GRID_NP;
+    grid.t_count = GRID_NT;
+
+    grid.p_cellsize = (GRID_P_END - GRID_P_START) / (GRID_NP - 1.0);
+    grid.t_cellsize = (GRID_T_END - GRID_T_START) / (GRID_NT - 1.0);
+}
+
+static void init_state(int n) {
     int n23 = n * 2 + 3;
-    r  = (double *)malloc(n23 * sizeof *r);
-    ri = (double *)malloc(n23 * sizeof *ri);
-    d  = (double *)malloc(n * sizeof *d);
 
-    prepr_(&n, r, ri, d);
+    state.r  = (double *)malloc(n23 * sizeof(double));
+    ASSERT(state.r != NULL);
+    state.ri = (double *)malloc(n23 * sizeof(double));
+    ASSERT(state.ri != NULL);
+    state.d  = (double *)malloc(n * sizeof(double));
+    ASSERT(state.d != NULL);
+
+    state.ps  = (double *)malloc(n * sizeof(double));
+    ASSERT(state.ps != NULL);
+    state.ips = (int *)malloc(n * sizeof(int));
+    ASSERT(state.ips != NULL);
+
+    state.am = (double *)malloc(n * sizeof(double));
+    ASSERT(state.am != NULL);
+    state.bm = (double *)malloc(n * sizeof(double));
+    ASSERT(state.bm != NULL);
+
+    state.am = (double *)malloc(n * sizeof(double));
+    ASSERT(state.am != NULL);
+    state.bm = (double *)malloc(n * sizeof(double));
+    ASSERT(state.bm != NULL);
 }
 
-void prepare_sectorial(int n, double cp) {
-    if (!d) return;
+WASM_EXPORT double *make_geoid(int n /* degree */) {
 
-    ps  = (double *)malloc(n * sizeof *ps);
-    ips = (int *)   malloc(n * sizeof *ips);
+    prepr_(&n, state.r, state.ri, state.d);        // FUKUSHIMA
+    
+    // alfsx_(&cp, &n, state.d, state.ps, state.ips);  // FUKUSHIMA
 
-    alfsx_(&cp, &n, d, ps, ips);
+    /* order dependant terms */
+    // for (int m = 0; m <= n; m++) {
+    //     prepab_(&m, &n, r, ri, am, bm);
+    // }
+
+    return NULL;
 }
 
-void prepare_ab(int n, int m) {
-    if (!r || !ri) return;
-
-    am = (double *)malloc(n * sizeof *am);
-    bm = (double *)malloc(n * sizeof *bm);
-
-    prepab_(&m, &n, r, ri, am, bm);
+/*
+WASM_EXPORT void kill_geoid(void) {
+    ASSERT(0 && "TODO: clean the state");
 }
 
 double* legendre(int n, int m, double sp) {
@@ -101,68 +151,4 @@ static inline float cosine(int deg) {
     }
     return cos;
 }
-
-WASM_EXPORT prepare_grids(int ntheta, int nphi) {
-    ctheta = (float *)malloc(ntheta * sizeof *ctheta);
-    stheta = (float *)malloc(ntheta * sizeof *stheta);
-    cphi = (float *)malloc(nphi * sizeof *cphi);
-    sphi = (float *)malloc(nphi * sizeof *sphi);
-
-    float theta_min = 1.0;
-    float theta_max = 179.0;
-
-    for (int i = 0; i < ntheta; i++) {
-        float t = theta_min + ((float)i) / ntheta * (theta_max - theta_min);
-        ctheta[i] = cosine(t);
-        stheta[i] = sine(t);
-    }
-
-    float phi_max = 360.0;
-    float phi_min = 1.0;
-
-    for (int i = 0; i < nphi; i++) {
-        float t = phi_min + ((float)i) / nphi * (phi_max - phi_min);
-        cphi[i] = cosine(t);
-        sphi[i] = sine(t);
-    }
-}
-
-WASM_EXPORT double* sphharm(int n, int m, double cp, double sp) {
-    unsigned char *ptr = (unsigned char *)egm84;
-
-    prepare_coefficients(n);
-    prepare_sectorial(n, cp);
-    prepare_ab(n, m);
-
-    return legendre(n, m, sp);
-}
-
-WASM_EXPORT void free_all(void) {
-    if (r) free(r);
-    if (ri) free(ri);
-    if (d) free(d);
-    if (ps) free(ps);
-    if (ips) free(ips);
-    if (am) free(am);
-    if (bm) free(bm);
-    if (pm) free(pm);
-
-    if (ctheta) free(ctheta);
-    if (stheta) free(stheta);
-    if (cphi) free(cphi);
-    if (sphi) free(sphi);
-
-    r = NULL;
-    ri = NULL;
-    d = NULL;
-    ps = NULL;
-    ips = NULL;
-    am = NULL;
-    bm = NULL;
-    pm = NULL;
-
-    ctheta = NULL;
-    stheta = NULL;
-    cphi = NULL;
-    sphi = NULL;
-}
+*/
