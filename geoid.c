@@ -42,6 +42,18 @@ struct Grid {
 #define GRID_NP 90
 #define GRID_NT 180
 
+static inline float cosine(int deg) {
+    deg %= 360; // make it less than 360
+    float rad = deg * PI / 180;
+    float cos = 0;
+
+    int i;
+    for(i = 0; i < TRIGTERMS; i++) { // That's also Taylor series!!
+        cos += power(-1, i) * power(rad, 2 * i) / fact(2 * i);
+    }
+    return cos;
+}
+
 static void init_grid(void) {
     grid.p_start = GRID_P_START;
     grid.t_start = GRID_T_START;
@@ -53,37 +65,51 @@ static void init_grid(void) {
     grid.t_cellsize = (GRID_T_END - GRID_T_START) / (GRID_NT - 1.0);
 }
 
-static void init_state(int n) {
-    int n23 = n * 2 + 3;
+static inline double get_phi(int index) {
+    return grid.p_start + grid.p_cellsize * index
+}
 
-    state.r  = (double *)malloc(n23 * sizeof(double));
+WASM_EXPORT void init_geoid(int nmax) {
+    /* Initialize the grid */
+    init_grid();
+
+    int n23max = nmax * 2 + 3;
+
+    state.r  = (double *)malloc(n23max * sizeof(double));
     ASSERT(state.r != NULL);
-    state.ri = (double *)malloc(n23 * sizeof(double));
+    state.ri = (double *)malloc(n23max * sizeof(double));
     ASSERT(state.ri != NULL);
-    state.d  = (double *)malloc(n * sizeof(double));
+    state.d  = (double *)malloc(nmax * sizeof(double));
     ASSERT(state.d != NULL);
 
-    state.ps  = (double *)malloc(n * sizeof(double));
+    state.ps  = (double *)malloc(nmax * sizeof(double));
     ASSERT(state.ps != NULL);
-    state.ips = (int *)malloc(n * sizeof(int));
+    state.ips = (int *)malloc(nmax * sizeof(int));
     ASSERT(state.ips != NULL);
 
-    state.am = (double *)malloc(n * sizeof(double));
+    state.am = (double *)malloc(nmax * sizeof(double));
     ASSERT(state.am != NULL);
-    state.bm = (double *)malloc(n * sizeof(double));
+    state.bm = (double *)malloc(nmax * sizeof(double));
     ASSERT(state.bm != NULL);
 
-    state.am = (double *)malloc(n * sizeof(double));
+    state.am = (double *)malloc(nmax * sizeof(double));
     ASSERT(state.am != NULL);
-    state.bm = (double *)malloc(n * sizeof(double));
+    state.bm = (double *)malloc(nmax * sizeof(double));
     ASSERT(state.bm != NULL);
 }
 
 WASM_EXPORT double *make_geoid(int n /* degree */) {
+    prepr_(&n, state.r, state.ri, state.d);              // FUKUSHIMA Precompute multiplication factors
 
-    prepr_(&n, state.r, state.ri, state.d);        // FUKUSHIMA
-    
-    // alfsx_(&cp, &n, state.d, state.ps, state.ips);  // FUKUSHIMA
+    for (int jp = 0; jp < grid.p_count; jp++) {
+        double phi = get_phi(jp);
+        double cphi = cosine(phi);
+
+        alfsx_(&cphi, &n, state.d, state.ps, state.ips); // FUKUSHIMA Precompute sectorial ALF's
+
+        for (int m = 0; m <= n; m++)
+
+    }
 
     /* order dependant terms */
     // for (int m = 0; m <= n; m++) {
