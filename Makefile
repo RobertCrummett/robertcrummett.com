@@ -2,16 +2,16 @@ CC=clang
 FC=flang
 
 CCFLAGS=--target=wasm32 -O3
-FCFLAGS=--target=i386-unknown-linux -O3 -emit-llvm 
+FCFLAGS=--target=i386-unknown-linux -emit-llvm 
 
 LLD=llc
-CLDFLAGS=--target=wasm32 -nostdlib -Wl,--no-entry
-LLDFLAGS=--march=wasm32 -O3 -filetype=obj
+CLDFLAGS=--target=wasm32 -O3 -nostdlib -Wl,--no-entry -Wl,--export-all
+LLDFLAGS=--march=wasm32 -filetype=obj
 
 geoid.wasm: geoid.o walloc.o xalf.o
 	$(CC) $(CLDFLAGS) -o $@ $^
 
-geoid.o: geoid.c
+geoid.o: geoid.c trig.h xalf.h walloc.h egm84.h
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 walloc.o: walloc.c

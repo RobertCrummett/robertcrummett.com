@@ -1,11 +1,12 @@
-#include "cos.h"
+#include "trig.h"
 #include "xalf.h"
 #include "walloc.h"
 #include "egm84.h"
 
 #define NULL ((void *)0)
-#define WASM_EXPORT __attribute__((used))
+// #define WASM_EXPORT __attribute__((used))
 #define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
+#define CHUNK 8
 
 #ifndef NDEBUG
 #define ASSERT(x) do { if (!(x)) __builtin_trap(); } while (0)
@@ -42,7 +43,7 @@ struct Grid {
 #define GRID_NP 90
 #define GRID_NT 180
 
-static void init_grid(void) {
+void init_grid(void) {
     grid.p_start = GRID_P_START;
     grid.t_start = GRID_T_START;
 
@@ -53,18 +54,35 @@ static void init_grid(void) {
     grid.t_cellsize = (GRID_T_END - GRID_T_START) / (GRID_NT - 1.0);
 }
 
-static inline double get_phi(int index) {
+double get_phi(int index) {
     return grid.p_start + grid.p_cellsize * index;
 }
 
-static inline double get_theta(int index) {
+double get_theta(int index) {
     return grid.t_start + grid.t_cellsize * index;
 }
 
+int offset(int n) {
+    return CHUNK * ((n * (n + 1)) / 2 - 3);
+}
 
+void extract_small(int nmax, int m, float *C, float *S) {
+    unsigned char *ptr = (unsigned char *)egm84;
+    if (nmax == 0 || !C || !S) return;
 
-WASM_EXPORT void init_geoid(int nmax) {
-    /* Initialize the grid */
+    for (unsigned n = m; n < nmax; n++) {
+        if (n < 2) {
+            C[n - m] = 0.0;
+            S[n - m] = 0.0;
+        } else {
+            int shift = offset(n) + CHUNK * m;
+            C[n - m] = *(float *)(ptr + shift);
+            S[n - m] = *(float *)(ptr + shift + 4);
+        }
+    }
+}
+
+void init_geoid(int nmax) {
     init_grid();
 
     int n23max = nmax * 2 + 3;
@@ -88,103 +106,52 @@ WASM_EXPORT void init_geoid(int nmax) {
     state.pm = (double *)malloc(nmax * sizeof(double));
     ASSERT(state.pm != NULL);
 
-    state.geoid = (double *)malloc(grid.p_count * grid.t_count * sizeof(double));
+    int grid_size = grid.p_count * grid.t_count;
+    state.geoid = (double *)malloc(grid_size * sizeof(double));
     ASSERT(state.geoid != NULL);
 
-    state.n = n;
-}
-
-WASM_EXPORT double *make_geoid(int m) {
-    if (n > state.n) {
-        ASSERT(0 && "TODO: Account for n exceeding maximum order");
-        return NULL;
+    // WARNING!!!
+    // Removing the `volatile` on -O3 allows the compiler to
+    // optimize the statement into a `calloc` call. This is
+    // expected, but not desirable behavior, because calloc is
+    // not implemented in `walloc.c`. For now, the volatile
+    // prevents this.
+    for (volatile int i = 0; i < grid_size; i++) {
+        state.geoid[i] = 0.0;
     }
 
+    state.n = nmax;
+}
+
+double *make_geoid(int m) {
     unsigned char *ptr = (unsigned char *)egm84;
 
-    prepr_(&n, state.r, state.ri, state.d); // FUKUSHIMA Precompute multiplication factors
+    prepr_(&state.n, state.r, state.ri, state.d); // FUKUSHIMA Precompute multiplication factors
 
     for (int jp = 0; jp < grid.p_count; jp++) {
         double phi = get_phi(jp);
         double cphi = cos(phi);
         double sphi = sin(phi);
 
-        alfsx_(&cphi, &n, state.d, state.ps, state.ips); // FUKUSHIMA Precompute sectorial ALF's
+        alfsx_(&cphi, &state.n, state.d, state.ps, state.ips); // FUKUSHIMA Precompute sectorial ALF's
+        prepab_(&m, &state.n, state.r, state.ri, state.am, state.bm); // FUKUSHIMA
+        alfmx_(&sphi, &m, &state.n, state.am, state.bm, state.ps, state.ips, state.pm); // FUKUSHIMA
 
-        for (int m = 0; m <= n; m++) {
-            prepab_(&m, &n, state.r, state.ri, state.am, state.bm); // FUKUSHIMA
-            
-            alfmx_(&sphi, &m, &nx, state.am, state.bm, state.ps, state.ips, state.pm); // FUKUSHIMA
+        for (int jt = 0; jt < grid.t_count; jt++) {
+            double theta = get_theta(jt);
+            double ctheta = cos(m * theta);
+            double stheta = sin(m * theta);
 
-            for (int jt = 0; jt < grid.t_count; jt++) {
-                double theta = get_theta(jt);
-                double ctheta = cos(theta);
-                double stheta = sin(theta);
+            float C, S;
+            for (int n = (m > 2 ? m : 2); n <= state.n; n++) {
+                int shift = offset(n) + CHUNK * m;
+                C = *(float *)(ptr + shift);
+                S = *(float *)(ptr + shift + 4);
 
-
+                state.geoid[jp * grid.p_count + jt] = 
+                    (ctheta * (double)C + stheta * (double)S) * state.pm[n];
             }
         }
     }
-
     return state.geoid;
 }
-
-/*
-WASM_EXPORT void kill_geoid(void) {
-    ASSERT(0 && "TODO: clean the state");
-}
-
-double* legendre(int n, int m, double sp) {
-    pm = (double *)malloc(n * sizeof *pm);
-
-    alfmx_(&sp, &m, &n, am, bm, &ps[m-1], &ips[m-1], pm); 
-
-    if (m > 0) {
-        for (int i = 0; i < m-1; i++)
-            pm[i] = 0.0;
-    }
-
-    return pm;
-}
-
-static inline float power(float base, int exp) {
-    if(exp < 0) {
-        if(base == 0)
-            return -0; // Error!!
-        return 1 / (base * power(base, (-exp) - 1));
-    }
-    if(exp == 0)
-        return 1;
-    if(exp == 1)
-        return base;
-    return base * power(base, exp - 1);
-}
-
-static inline int fact(int n) {
-    return n <= 0 ? 1 : n * fact(n-1);
-}
-
-static inline float sine(int deg) {
-    deg %= 360;
-    float rad = deg * PI / 180;
-    float sin = 0;
-
-    int i;
-    for(i = 0; i < TRIGTERMS; i++) {
-        sin += power(-1, i) * power(rad, 2 * i + 1) / fact(2 * i + 1);
-    }
-    return sin;
-}
-
-static inline float cosine(int deg) {
-    deg %= 360; // make it less than 360
-    float rad = deg * PI / 180;
-    float cos = 0;
-
-    int i;
-    for(i = 0; i < TRIGTERMS; i++) { // That's also Taylor series!!
-        cos += power(-1, i) * power(rad, 2 * i) / fact(2 * i);
-    }
-    return cos;
-}
-*/
