@@ -3,8 +3,9 @@
 #include "walloc.h"
 #include "egm84.h"
 
-#define NULL ((void *)0)
 #define WASM_EXPORT(A) __attribute__((export_name(A)))
+
+#define NULL ((void *)0)
 #define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 #define CHUNK 8
 
@@ -22,7 +23,7 @@ static struct State {
     double *am;
     double *bm;
     double *pm;
-    double *geoid;
+    float *geoid;
     int *ips;
     int n;
 } state;
@@ -40,8 +41,8 @@ static struct Grid {
 #define GRID_T_START -180.0
 #define GRID_P_END 179.0
 #define GRID_T_END 178.0
-#define GRID_NP 90
-#define GRID_NT 180
+#define GRID_NP 178
+#define GRID_NT 360
 
 static void init_grid(void) {
     grid.p_start = GRID_P_START;
@@ -54,32 +55,20 @@ static void init_grid(void) {
     grid.t_cellsize = (GRID_T_END - GRID_T_START) / (GRID_NT - 1.0);
 }
 
+static double deg2rad(double deg) {
+    return deg * PI / 180.0;
+}
+
 static double get_phi(int index) {
-    return grid.p_start + grid.p_cellsize * index;
+    return deg2rad(grid.p_start + grid.p_cellsize * index);
 }
 
 static double get_theta(int index) {
-    return grid.t_start + grid.t_cellsize * index;
+    return deg2rad(grid.t_start + grid.t_cellsize * index);
 }
 
 static int offset(int n) {
     return CHUNK * ((n * (n + 1)) / 2 - 3);
-}
-
-static void extract_small(int nmax, int m, float *C, float *S) {
-    unsigned char *ptr = (unsigned char *)egm84;
-    if (nmax == 0 || !C || !S) return;
-
-    for (unsigned n = m; n < nmax; n++) {
-        if (n < 2) {
-            C[n - m] = 0.0;
-            S[n - m] = 0.0;
-        } else {
-            int shift = offset(n) + CHUNK * m;
-            C[n - m] = *(float *)(ptr + shift);
-            S[n - m] = *(float *)(ptr + shift + 4);
-        }
-    }
 }
 
 WASM_EXPORT("init_geoid") void init_geoid(int nmax) {
@@ -107,7 +96,7 @@ WASM_EXPORT("init_geoid") void init_geoid(int nmax) {
     ASSERT(state.pm != NULL);
 
     int grid_size = grid.p_count * grid.t_count;
-    state.geoid = (double *)malloc(grid_size * sizeof(double));
+    state.geoid = (float *)malloc(grid_size * sizeof(float));
     ASSERT(state.geoid != NULL);
 
     // WARNING!!!
@@ -123,7 +112,7 @@ WASM_EXPORT("init_geoid") void init_geoid(int nmax) {
     state.n = nmax;
 }
 
-WASM_EXPORT("update_geoid") double *update_geoid(int m) {
+WASM_EXPORT("update_geoid") float *update_geoid(int m) {
     unsigned char *ptr = (unsigned char *)egm84;
 
     prepr_(&state.n, state.r, state.ri, state.d); // FUKUSHIMA Precompute multiplication factors
@@ -147,8 +136,8 @@ WASM_EXPORT("update_geoid") double *update_geoid(int m) {
                 float C = *(float *)(ptr + shift);
                 float S = *(float *)(ptr + shift + 4);
 
-                state.geoid[jp * grid.p_count + jt] = 
-                    (ctheta * (double)C + stheta * (double)S) * state.pm[n];
+                state.geoid[jp * grid.t_count + jt] += 
+                    (float)((ctheta*C + stheta*S) * state.pm[n]);
             }
         }
     }

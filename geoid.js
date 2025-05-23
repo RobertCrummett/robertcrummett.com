@@ -6,10 +6,20 @@ fetch('geoid.wasm')
         const update_geoid = results.instance.exports.update_geoid
         const free_geoid = results.instance.exports.free_geoid
 
-        init_geoid(180)
+        const memory = results.instance.exports.memory
 
-        var order = 1
-        var ptr = update_geoid(order)
+        const nmax = 180
+        init_geoid(nmax)
+
+        const array_size = 178 * 360
+        for (let m = 0; m <= nmax; m++) {
+            var ptr = update_geoid(m)
+
+            const buffer = memory.buffer
+            const geoid = new Float32Array(buffer, ptr, array_size)
+
+            console.log(`m = ${m}     ${geoid[0]}`)
+        }
         
         free_geoid()
     });
