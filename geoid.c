@@ -1,11 +1,11 @@
+#include "cos.h"
 #include "xalf.h"
 #include "walloc.h"
 #include "egm84.h"
 
 #define NULL ((void *)0)
 #define WASM_EXPORT __attribute__((used))
-#define TRIGTERMS 7
-#define PI 3.141592653589793
+#define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 
 #ifndef NDEBUG
 #define ASSERT(x) do { if (!(x)) __builtin_trap(); } while (0)
@@ -23,14 +23,14 @@ struct State {
     double *pm;
     double *geoid;
     int *ips;
-    int order; 
+    int n;
 } state;
 
 struct Grid {
     double p_start;
     double t_start;
-    double p_count;
-    double t_count;
+    int p_count;
+    int t_count;
     double p_cellsize;
     double t_cellsize;
 } grid;
@@ -41,18 +41,6 @@ struct Grid {
 #define GRID_T_END 178.0
 #define GRID_NP 90
 #define GRID_NT 180
-
-static inline float cosine(int deg) {
-    deg %= 360; // make it less than 360
-    float rad = deg * PI / 180;
-    float cos = 0;
-
-    int i;
-    for(i = 0; i < TRIGTERMS; i++) { // That's also Taylor series!!
-        cos += power(-1, i) * power(rad, 2 * i) / fact(2 * i);
-    }
-    return cos;
-}
 
 static void init_grid(void) {
     grid.p_start = GRID_P_START;
@@ -66,8 +54,14 @@ static void init_grid(void) {
 }
 
 static inline double get_phi(int index) {
-    return grid.p_start + grid.p_cellsize * index
+    return grid.p_start + grid.p_cellsize * index;
 }
+
+static inline double get_theta(int index) {
+    return grid.t_start + grid.t_cellsize * index;
+}
+
+
 
 WASM_EXPORT void init_geoid(int nmax) {
     /* Initialize the grid */
@@ -91,32 +85,48 @@ WASM_EXPORT void init_geoid(int nmax) {
     ASSERT(state.am != NULL);
     state.bm = (double *)malloc(nmax * sizeof(double));
     ASSERT(state.bm != NULL);
+    state.pm = (double *)malloc(nmax * sizeof(double));
+    ASSERT(state.pm != NULL);
 
-    state.am = (double *)malloc(nmax * sizeof(double));
-    ASSERT(state.am != NULL);
-    state.bm = (double *)malloc(nmax * sizeof(double));
-    ASSERT(state.bm != NULL);
+    state.geoid = (double *)malloc(grid.p_count * grid.t_count * sizeof(double));
+    ASSERT(state.geoid != NULL);
+
+    state.n = n;
 }
 
-WASM_EXPORT double *make_geoid(int n /* degree */) {
-    prepr_(&n, state.r, state.ri, state.d);              // FUKUSHIMA Precompute multiplication factors
+WASM_EXPORT double *make_geoid(int m) {
+    if (n > state.n) {
+        ASSERT(0 && "TODO: Account for n exceeding maximum order");
+        return NULL;
+    }
+
+    unsigned char *ptr = (unsigned char *)egm84;
+
+    prepr_(&n, state.r, state.ri, state.d); // FUKUSHIMA Precompute multiplication factors
 
     for (int jp = 0; jp < grid.p_count; jp++) {
         double phi = get_phi(jp);
-        double cphi = cosine(phi);
+        double cphi = cos(phi);
+        double sphi = sin(phi);
 
         alfsx_(&cphi, &n, state.d, state.ps, state.ips); // FUKUSHIMA Precompute sectorial ALF's
 
-        for (int m = 0; m <= n; m++)
+        for (int m = 0; m <= n; m++) {
+            prepab_(&m, &n, state.r, state.ri, state.am, state.bm); // FUKUSHIMA
+            
+            alfmx_(&sphi, &m, &nx, state.am, state.bm, state.ps, state.ips, state.pm); // FUKUSHIMA
 
+            for (int jt = 0; jt < grid.t_count; jt++) {
+                double theta = get_theta(jt);
+                double ctheta = cos(theta);
+                double stheta = sin(theta);
+
+
+            }
+        }
     }
 
-    /* order dependant terms */
-    // for (int m = 0; m <= n; m++) {
-    //     prepab_(&m, &n, r, ri, am, bm);
-    // }
-
-    return NULL;
+    return state.geoid;
 }
 
 /*

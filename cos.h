@@ -336,10 +336,30 @@ static double costable_0_001[] = {
 
 const int costable_0_001_size = 6285;
 
-#define COS_PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
-#define COS_MMOD(x)  
+#ifndef PI
+#define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
+#define
+#define modd(x, y) ((x) - (int)((x) / (y)) * (y))
+#define lerp(w, v1, v2) ((1.0 - (w)) * (v1) + (w) * (v2))
 
-double cos(double) {
+double absd(double a) { 
+    *((unsigned long *)&a) &= ~(1UL << 63); 
+    return a; 
 }
+
+double cos(double x) {
+    x = absd(x);
+    x = modd(x, CONST_2PI);
+    double i = x * 100.0;
+    int index = (int)i;
+    return lerp(i - index,          /* weight      */
+        costable_0_0001[index],     /* lower value */
+        costable_0_0001[index + 1]  /* upper value */
+    );
+}
+
+#undef modd
+#undef lerp
+#undef PI
 
 #endif // COS_H_
