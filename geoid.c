@@ -4,7 +4,7 @@
 #include "egm84.h"
 
 #define NULL ((void *)0)
-#define WASM_EXPORT __attribute__((used))
+#define WASM_EXPORT(A) __attribute__((export_name(A)))
 #define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 #define CHUNK 8
 
@@ -14,7 +14,7 @@
 #define ASSERT(x) do {} while (0)
 #endif // NDEBUG defined?
 
-struct State {
+static struct State {
     double *r;
     double *ri;
     double *d;
@@ -27,7 +27,7 @@ struct State {
     int n;
 } state;
 
-struct Grid {
+static struct Grid {
     double p_start;
     double t_start;
     int p_count;
@@ -43,7 +43,7 @@ struct Grid {
 #define GRID_NP 90
 #define GRID_NT 180
 
-void init_grid(void) {
+static void init_grid(void) {
     grid.p_start = GRID_P_START;
     grid.t_start = GRID_T_START;
 
@@ -54,19 +54,19 @@ void init_grid(void) {
     grid.t_cellsize = (GRID_T_END - GRID_T_START) / (GRID_NT - 1.0);
 }
 
-double get_phi(int index) {
+static double get_phi(int index) {
     return grid.p_start + grid.p_cellsize * index;
 }
 
-double get_theta(int index) {
+static double get_theta(int index) {
     return grid.t_start + grid.t_cellsize * index;
 }
 
-int offset(int n) {
+static int offset(int n) {
     return CHUNK * ((n * (n + 1)) / 2 - 3);
 }
 
-void extract_small(int nmax, int m, float *C, float *S) {
+static void extract_small(int nmax, int m, float *C, float *S) {
     unsigned char *ptr = (unsigned char *)egm84;
     if (nmax == 0 || !C || !S) return;
 
@@ -82,7 +82,7 @@ void extract_small(int nmax, int m, float *C, float *S) {
     }
 }
 
-WASM_EXPORT void init_geoid(int nmax) {
+WASM_EXPORT("init_geoid") void init_geoid(int nmax) {
     init_grid();
 
     int n23max = nmax * 2 + 3;
@@ -123,7 +123,7 @@ WASM_EXPORT void init_geoid(int nmax) {
     state.n = nmax;
 }
 
-WASM_EXPORT double *update_geoid(int m) {
+WASM_EXPORT("update_geoid") double *update_geoid(int m) {
     unsigned char *ptr = (unsigned char *)egm84;
 
     prepr_(&state.n, state.r, state.ri, state.d); // FUKUSHIMA Precompute multiplication factors
@@ -153,4 +153,19 @@ WASM_EXPORT double *update_geoid(int m) {
         }
     }
     return state.geoid;
+}
+
+WASM_EXPORT("free_geoid") void free_geoid(void) {
+    free(state.r);
+    free(state.ri);
+    free(state.d);
+
+    free(state.ps);
+    free(state.ips);
+
+    free(state.am);
+    free(state.bm);
+    free(state.pm);
+
+    free(state.geoid);
 }
