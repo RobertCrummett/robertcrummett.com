@@ -5,9 +5,11 @@ CCFLAGS=--target=wasm32 -O3
 FCFLAGS=--target=i386-unknown-linux -emit-llvm 
 
 LLD=llc
-CLDFLAGS=--target=wasm32 -O3 -nostdlib -Wl,--no-entry -Wl,--export-all
-LLDFLAGS=--march=wasm32 -filetype=obj
-
+CLDFLAGS=--target=wasm32 -O3 -nostdlib -Wl,--no-entry # -Wl,--export-all
+LLDFLAGS=--march=wasm32 -filetype=obj                 # 
+													  # This is only relevant
+                                                      # when not using EXPORT
+													  # _WASM flag in C
 geoid.wasm: geoid.o walloc.o xalf.o
 	$(CC) $(CLDFLAGS) -o $@ $^
 

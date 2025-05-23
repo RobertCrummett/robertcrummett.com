@@ -4,7 +4,7 @@
 #include "egm84.h"
 
 #define NULL ((void *)0)
-// #define WASM_EXPORT __attribute__((used))
+#define WASM_EXPORT __attribute__((used))
 #define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 #define CHUNK 8
 
@@ -82,7 +82,7 @@ void extract_small(int nmax, int m, float *C, float *S) {
     }
 }
 
-void init_geoid(int nmax) {
+WASM_EXPORT void init_geoid(int nmax) {
     init_grid();
 
     int n23max = nmax * 2 + 3;
@@ -123,7 +123,7 @@ void init_geoid(int nmax) {
     state.n = nmax;
 }
 
-double *make_geoid(int m) {
+WASM_EXPORT double *update_geoid(int m) {
     unsigned char *ptr = (unsigned char *)egm84;
 
     prepr_(&state.n, state.r, state.ri, state.d); // FUKUSHIMA Precompute multiplication factors
@@ -142,11 +142,10 @@ double *make_geoid(int m) {
             double ctheta = cos(m * theta);
             double stheta = sin(m * theta);
 
-            float C, S;
             for (int n = (m > 2 ? m : 2); n <= state.n; n++) {
                 int shift = offset(n) + CHUNK * m;
-                C = *(float *)(ptr + shift);
-                S = *(float *)(ptr + shift + 4);
+                float C = *(float *)(ptr + shift);
+                float S = *(float *)(ptr + shift + 4);
 
                 state.geoid[jp * grid.p_count + jt] = 
                     (ctheta * (double)C + stheta * (double)S) * state.pm[n];
