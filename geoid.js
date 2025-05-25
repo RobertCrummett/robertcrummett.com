@@ -8,12 +8,12 @@ let wasmModule
 let wasmExports
 
 async function initWASM() {
-    const response = await fetch('geoid.wasm')
-    const bytes = await response.arrayBuffer()
-    const wasmInstance = await WebAssembly.instantiate(bytes)
+	const response = await fetch('geoid.wasm')
+	const bytes = await response.arrayBuffer()
+	const wasmInstance = await WebAssembly.instantiate(bytes)
 
-    wasmModule = wasmInstance.instance
-    wasmExports = wasmInstance.instance.exports
+	wasmModule = wasmInstance.instance
+	wasmExports = wasmInstance.instance.exports
 }
 
 initWASM().catch(console.error)
@@ -30,9 +30,9 @@ var camera = new THREE.PerspectiveCamera(30, container.clientWidth/ container.cl
 camera.position.z = 9
 
 var renderer = new THREE.WebGLRenderer({
-    antialias: false,
-    alpha: false,
-    powerPreference: "high-performance",
+	antialias: false,
+	alpha: false,
+	powerPreference: "high-performance",
 })
 renderer.setSize(container.clientWidth, container.clientHeight)
 renderer.setAnimationLoop( animationLoop )
@@ -49,11 +49,26 @@ controls.maxDistance = 20
 
 scene.add(new THREE.AmbientLight('white', 0.8));
 
-const geometry = new THREE.SphereGeometry(1, 256, 128)
+const geometry = new THREE.SphereGeometry(1, 8, 4)
 const positions = geometry.attributes.position.array
 
+function positionToSpherical(positions, colatitude, longitude) {
+	for (let i = 0; i < colatitude.length; i++) {
+		const x = positions[3 * i]
+		const y = positions[3 * i + 1]
+		const z = positions[3 * i + 2]
+		const r = Math.sqrt(x*x + y*y + z*z)
+		colatitude[i] = Math.acos(y / r)
+		longitude[i] = Math.atan2(x, z)
+	}
+}
+
+const colatitude = new Float32Array(positions.length/3)
+const longitude = new Float32Array(positions.length/3)
+positionToSpherical(positions, colatitude, longitude)
+
 const tempColor = new THREE.Color()
-const colors = new Float32Array(positions.length * 3)
+const colors = new Float32Array(positions.length)
 const colorAttribute = new THREE.BufferAttribute(colors, 3)
 colorAttribute.setUsage(THREE.DynamicDrawUsage)
 geometry.setAttribute('color', colorAttribute)
@@ -61,29 +76,38 @@ geometry.setAttribute('color', colorAttribute)
 //
 // UPDATE COLOR MAP ON SPHERE
 //
+const black = new THREE.Color(0x000000);
 function updateColors() {
-    if (!wasmExports) return
+	if (!wasmExports) return
 
-    const hue = ((Date.now() * 0.01) % 360) / 360
-    tempColor.setHSL(hue, 1.0, 0.5)
+	const hue = ((Date.now() * 0.01) % 360) / 360
+	tempColor.setHSL(hue, 1.0, 0.5)
 
-    for (let i = 0; i < positions.length * 3; i += 3) {
-        colors[i + 0] = tempColor.r
-        colors[i + 1] = tempColor.g
-        colors[i + 2] = tempColor.b
-    }
+	for (let i = 0; i < positions.length; i+=3) {
+		if (positions[i+1] === 1 || positions[i+1] === -1) {
+			colors[i] = black.r
+			colors[i + 1] = black.b
+			colors[i + 2] = black.g
+		} else {
+			colors[i] = tempColor.r
+			colors[i + 1] = tempColor.g
+			colors[i + 2] = tempColor.b
+		}
+	}
 
-    geometry.attributes.color.array.set(colors)
-    geometry.attributes.color.needsUpdate = true
+	geometry.attributes.color.array.set(colors)
+	geometry.attributes.color.needsUpdate = true
 }
 
-const material = new THREE.MeshBasicMaterial({vertexColors: true})
+const material = new THREE.MeshBasicMaterial({
+	vertexColors: true,
+	wireframe: true,
+})
 material.color.convertSRGBToLinear()
 
 var sphere = new THREE.Mesh(geometry, material)
 sphere.scale.set(1.5, 1.5, 1.5)
 scene.add(sphere)
-console.log(sphere)
 
 scene.add(new THREE.AxesHelper(4))
 
@@ -93,9 +117,9 @@ scene.add(new THREE.AxesHelper(4))
 setInterval(updateColors, 100)
 
 function animationLoop() {
-    controls.update()
-    renderer.render(scene, camera)
-    requestAnimationFrame(animationLoop)
+	controls.update()
+	renderer.render(scene, camera)
+	requestAnimationFrame(animationLoop)
 }
 
 animationLoop()
