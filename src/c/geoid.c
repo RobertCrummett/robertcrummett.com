@@ -29,7 +29,10 @@ struct Positions {
 	double *colatitude;
 	double *longitude;
 	int n;
+	int unique_colats;
 } positions;
+
+double *geoid;
 
 WASM_EXPORT("init_geoid") void init_geoid(float *colatitude, float *longitude, int npos)
 {
@@ -42,7 +45,6 @@ WASM_EXPORT("init_geoid") void init_geoid(float *colatitude, float *longitude, i
 	ASSERT(state.rooti != NULL);
 
 	// Preallocate all of the roots
-	state.n = 0;
 	state.nx = NMAX;
 	prepr(&state.nx, state.root, state.rooti);
 
@@ -56,6 +58,39 @@ WASM_EXPORT("init_geoid") void init_geoid(float *colatitude, float *longitude, i
 	ASSERT(positions.colatitude != NULL);
 	positions.longitude = malloc(npos * sizeof *positions.longitude);
 	ASSERT(positions.longitude != NULL);
+
+	// HACK the volatile prevents tricky optimization, which is
+	// necessary when compiling with `-nostdlib` specified on `clang`....
+	for (volatile int i = 0; i < npos; i++) {
+		positions.colatitude[i] = (double)colatitude[i];
+		positions.longitude[i] = (double)longitude[i];
+	}
+
+	// Count the number of unique colatitudes for efficient updates later
+	state.unique_colats = 1;
+	double last_colat = positions.colatitude[0];
+	for (int i = 1; i < npos; i++) {
+		if (positions.colatitude[i] != last_colat) {
+			last_colat = positions.colatitude[i];
+			state.unique_colats++;
+		}
+	}
+
+	// Allocate the geoid values
+	geoid = malloc(npos * sizeof *geoid.data);
+
+	// HACK the volatile prevents tricky optimization, which is
+	// necessary when compiling with `-nostdlib` specified on `clang`....
+	for (volatile int i = 0; i < npos; i++) {
+		geoid[i] = 0.0f;
+	}
+
+	// Bootstrap the state variables
+	state.n = 0; // NOTE the first two degrees are 0.0, by definition
+	xmalf(&state.n, &theta, state.pn, state.root, state.rooti, &state.w, &state.iw);
+	state.n++; // n = 1
+	xmalf(&state.n, &theta, state.pn, state.root, state.rooti, &state.w, &state.iw);
+	state.n++; // n = 2
 }
 
 WASM_EXPORT("cleanup_geoid") void cleanup_geoid(void)
@@ -66,9 +101,20 @@ WASM_EXPORT("cleanup_geoid") void cleanup_geoid(void)
 	free(state.pn);
 	free(positions.colatitude);
 	free(positions.longitude);
+	free(geoid);
 }
 
 WASM_EXPORT("update_geoid") double *update_geoid(void)
 {
-					
+	// NOTE `init_geoid` must be called before this function
+	// Compute geoid, at the positions & degree specified. Passes back the geoid pointer
+
+	// Check sure we do not accidentally go beyond the coefficient file boundary
+	if (state.n > NMAX) return geoid;	
+
+	ASSERT(0 && "TODO");
+
+	// extern void xmalf(int *n, double *theta, double *pn, double *root, double *rooti, double *w, int *iw);
+	xmalf(&state.n, &theta, state.pn, state.root, state.rooti, state.w, state.iw);
+	state.n++;
 }
