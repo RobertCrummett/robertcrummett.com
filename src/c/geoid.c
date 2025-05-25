@@ -30,7 +30,7 @@ struct Positions {
 	double *lon;
 } pos;
 
-WASM_EXPORT("init_geoid") void init_geoid(int nx)
+WASM_EXPORT("init_geoid") int init_geoid(int nx)
 {
 	state.root = malloc((2*nx+3) * sizeof *state.root);
 	ASSERT(state.root != NULL);
@@ -44,6 +44,13 @@ WASM_EXPORT("init_geoid") void init_geoid(int nx)
 
 	state.pn = malloc((nx+1) * sizeof *state.pn);
 	ASSERT(state.pn != NULL);
+
+	volatile int i;
+	for (i = 0; i < 100000000; i++) {
+		volatile double s = sin((double)i);
+	}
+
+	return i;
 }
 
 WASM_EXPORT("update_geoid") void update_geoid() {

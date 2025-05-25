@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             title: "Hello World in C",
             description: "A simple C program demonstrating basic syntax.",
-            download: "raw/hello-world.c",
+            download: "../../assets/code-snippets/hello-world.c",
             github: "https://github.com/RobertCrummett/hello-world.git",
             code: `// hello-world.c
 <b>#include</b> &ltstdio.h&gt
@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
         {
             title: "Work In Progress",
             description: "Finish this page later.",
-            download: "raw/in-progess.c",
+            download: "../../assets/code-snippets/in-progress.c",
             github: "https://github.com/RobertCrummett",
             code: `// in-progress.c
 <b>#ifndef</b> NDEBUG

@@ -4,20 +4,20 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 //
 // LOAD WASM FILES
 //
-let wasmModule
-let wasmExports
-
 async function initWASM() {
 	const response = await fetch('geoid.wasm')
 	const bytes = await response.arrayBuffer()
 	const wasmInstance = await WebAssembly.instantiate(bytes)
 
-	wasmModule = wasmInstance.instance
-	wasmExports = wasmInstance.instance.exports
+	const wasmExports = wasmInstance.instance.exports
+
+	const init_geoid = wasmExports.init_geoid
+
+	const result = init_geoid(180)
+	console.log(result)
 }
 
 initWASM().catch(console.error)
-
 //
 // PLOT SPHERE GEOMETRY
 //
@@ -78,8 +78,6 @@ geometry.setAttribute('color', colorAttribute)
 //
 const black = new THREE.Color(0x000000);
 function updateColors() {
-	if (!wasmExports) return
-
 	const hue = ((Date.now() * 0.01) % 360) / 360
 	tempColor.setHSL(hue, 1.0, 0.5)
 
