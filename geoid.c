@@ -41,8 +41,8 @@ static struct Grid {
 #define GRID_T_START -180.0
 #define GRID_P_END 179.0
 #define GRID_T_END 178.0
-#define GRID_NP 178
-#define GRID_NT 360
+#define GRID_NP 90
+#define GRID_NT 180
 
 static void init_grid(void) {
     grid.p_start = GRID_P_START;

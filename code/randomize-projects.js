@@ -6,39 +6,30 @@ document.addEventListener('DOMContentLoaded', function() {
             download: "raw/hello-world.c",
             github: "https://github.com/RobertCrummett/hello-world.git",
             code: `// hello-world.c
-#include <stdio.h>
+<b>#include</b> &ltstdio.h&gt
 
-int main() {
+int main(int argc, char **argv) {
     printf("Hello, World!\\n");
     return 0;
 }`
         },
         {
-            title: "Hello World in C",
-            description: "A simple C program demonstrating basic syntax.",
-            download: "raw/hello-world.c",
-            github: "https://github.com/RobertCrummett/hello-world.git",
-            code: `// hello-world.c
-#include <stdio.h>
+            title: "Work In Progress",
+            description: "Finish this page later.",
+            download: "raw/in-progess.c",
+            github: "https://github.com/RobertCrummett",
+            code: `// in-progress.c
+<b>#ifndef</b> NDEBUG
+<b>#define</b> ASSERT(x) do { if (!(x)) __builtin_trap(); } while (0)
+<b>#else</b>
+<b>#define</b> ASSERT(x) do { } while (0)
+<b>#endif</b> 
 
-int main() {
-    printf("Hello, World!\\n");
+int main(void) {
+    ASSERT(0 && "TODO: Add my projects to this page.");
     return 0;
 }`
         },
-        {
-            title: "Hello World in C",
-            description: "A simple C program demonstrating basic syntax.",
-            download: "raw/hello-world.c",
-            github: "https://github.com/RobertCrummett/hello-world.git",
-            code: `// hello-world.c
-#include <stdio.h>
-
-int main() {
-    printf("Hello, World!\\n");
-    return 0;
-}`
-        }
     ];
 
     const PROJECTS_TO_SHOW = 2; // Number of projects to display

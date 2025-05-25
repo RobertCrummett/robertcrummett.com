@@ -8,6 +8,13 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
         <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="style.css">
+        <script type="importmap"> {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.176.0/examples/jsm/"
+            }
+        } </script>
     </head>
     <body>
         <nav class="navbar">
@@ -22,7 +29,8 @@
 
         <main>
             <h1>Welcome to My Personal Website</h1>
-            <p>This is where I will advertise myself.</p>
+            <div id="geoid-container"></div>
+            <script type="module" src="geoid.js"></script>
         </main>
 
         <footer>
@@ -41,7 +49,5 @@
                 </div>
             </div>
         </footer>
-
-        <script src="geoid.js"></script>
     </body>
 </html>
