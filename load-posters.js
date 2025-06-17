@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 'ameposter',
             title: 'Reformulation of Reduction-to-Pole by Reduction-to-Equator Operators',
             conference: 'Association for Mineral Exploration, Roundup 2025',
-            dziPath: '../../assets/posters/ameposter.dzi',
-            pdfPath: '../../assets/posters/ameposter.pdf'
+            dziPath: './assets/posters/ameposter.dzi',
+            pdfPath: './assets/posters/ameposter.pdf'
         }
     ];
 
@@ -54,5 +54,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-console.log("Hello from gallery!");
