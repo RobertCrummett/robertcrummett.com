@@ -96,3 +96,24 @@ main h1 {
 .poster-btn-container {
     margin: 1rem auto;
 }
+
+footer {
+    background-color: #fdfdfd;
+    padding: 0.75rem 0;
+    margin-top: auto;
+}
+
+.footer-copyright {
+    width: 100%;
+    text-align: center;
+    font-size: 0.75rem;
+    padding-top: 0;
+    margin-top: 0.1rem;
+    color: #666;
+}
+
+.footer-copyright p {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
