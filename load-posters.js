@@ -1,11 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
     const posters = [
         {
-            id: 'ameposter',
+            id: 'radiometrics-image-2025',
+            title: 'Revisiting Radiometric Ratios: Isometric Log Ratio Transforms to Balance Potassium, Throrium, and Uranium Ratios in Regional-Scale Mineral Exploration',
+            conference: 'International Meeting for Applied Geosciences & Energy 2025',
+            dziPath: './assets/posters/radiometrics-image-2025.dzi',
+            pdfPath: './assets/posters/radiometrics-image-2025.pdf'
+        },
+        {
+            id: 'magnetics-ame-2025',
             title: 'Reformulation of Reduction-to-Pole by Reduction-to-Equator Operators',
             conference: 'Association for Mineral Exploration, Roundup 2025',
-            dziPath: './assets/posters/ameposter.dzi',
-            pdfPath: './assets/posters/ameposter.pdf'
+            dziPath: './assets/posters/magnetics-ame-2025.dzi',
+            pdfPath: './assets/posters/magnetics-ame-2025.pdf'
         }
     ];
 
@@ -32,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div class="poster-btn-container">
                 <a href="${poster.pdfPath}" class="poster-btn download-btn" download>
-                    Download Full Poster (PDF)
+                    Download Low Resolution Poster (PDF)
                 </a>
             </div>
         `;
