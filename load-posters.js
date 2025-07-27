@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const posters = [
         {
             id: 'radiometrics-image-2025',
-            title: 'Revisiting Radiometric Ratios: Isometric Log Ratio Transforms to Balance Potassium, Throrium, and Uranium Ratios in Regional-Scale Mineral Exploration',
+            title: 'Revisiting Radiometric Ratios: Isometric Log Ratio Transforms to Balance Potassium, Thorium, and Uranium Ratios in Regional-Scale Mineral Exploration',
             conference: 'International Meeting for Applied Geosciences & Energy 2025',
             dziPath: './assets/posters/radiometrics-image-2025.dzi',
             pdfPath: './assets/posters/radiometrics-image-2025.pdf'
