@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<image xmlns="http://www.vips.ecs.soton.ac.uk//dzsave" date="2025-08-05T12:46:47.334972-06" version="8.17.1">
+<image xmlns="http://www.vips.ecs.soton.ac.uk//dzsave" date="2025-08-14T16:02:18.091574-06" version="8.17.1">
   <properties>
     <property>
       <name>width</name>
@@ -56,11 +56,11 @@
 &lt;x:xmpmeta xmlns:x='adobe:ns:meta/' x:xmptk='XMP toolkit 2.9.1-13, framework 1.6'&gt;
 &lt;rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:iX='http://ns.adobe.com/iX/1.0/'&gt;
 &lt;rdf:Description rdf:about="" xmlns:pdf='http://ns.adobe.com/pdf/1.3/' pdf:Producer='GPL Ghostscript 10.05.1'/&gt;
-&lt;rdf:Description rdf:about="" xmlns:xmp='http://ns.adobe.com/xap/1.0/'&gt;&lt;xmp:ModifyDate&gt;2025-08-05T12:43:17-06:00&lt;/xmp:ModifyDate&gt;
-&lt;xmp:CreateDate&gt;2025-08-05T12:43:17-06:00&lt;/xmp:CreateDate&gt;
-&lt;xmp:MetadataDate&gt;2025-08-05T12:43:17-06:00&lt;/xmp:MetadataDate&gt;
+&lt;rdf:Description rdf:about="" xmlns:xmp='http://ns.adobe.com/xap/1.0/'&gt;&lt;xmp:ModifyDate&gt;2025-08-14T15:58:54-06:00&lt;/xmp:ModifyDate&gt;
+&lt;xmp:CreateDate&gt;2025-08-14T15:58:54-06:00&lt;/xmp:CreateDate&gt;
+&lt;xmp:MetadataDate&gt;2025-08-14T15:58:54-06:00&lt;/xmp:MetadataDate&gt;
 &lt;xmp:CreatorTool&gt;Typst 0.13.1&lt;/xmp:CreatorTool&gt;&lt;/rdf:Description&gt;
-&lt;rdf:Description rdf:about="" xmlns:xmpMM='http://ns.adobe.com/xap/1.0/mm/' xmpMM:DocumentID='uuid:99d50481-aa48-11fb-0000-29e3d96f5929'/&gt;
+&lt;rdf:Description rdf:about="" xmlns:xmpMM='http://ns.adobe.com/xap/1.0/mm/' xmpMM:DocumentID='uuid:6b58f5d7-b176-11fb-0000-84c090859333'/&gt;
 &lt;rdf:Description rdf:about="" xmlns:xmpMM='http://ns.adobe.com/xap/1.0/mm/' xmpMM:RenditionClass='default'/&gt;
 &lt;rdf:Description rdf:about="" xmlns:xmpMM='http://ns.adobe.com/xap/1.0/mm/' xmpMM:VersionID='1'/&gt;
 &lt;rdf:Description rdf:about="" xmlns:dc='http://purl.org/dc/elements/1.1/' dc:format='application/pdf'&gt;&lt;dc:title&gt;&lt;rdf:Alt&gt;&lt;rdf:li xml:lang='x-default'&gt;Untitled&lt;/rdf:li&gt;&lt;/rdf:Alt&gt;&lt;/dc:title&gt;&lt;/rdf:Description&gt;
