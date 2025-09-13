@@ -1,3 +1,2 @@
-posters/*.dzi filter=lfs diff=lfs merge=lfs -text
-posters/*.pdf filter=lfs diff=lfs merge=lfs -text
-posters/ameposter_files filter=lfs diff=lfs merge=lfs -text
+**/*.dzi filter=lfs diff=lfs merge=lfs -text
+**/*.pdf filter=lfs diff=lfs merge=lfs -text
