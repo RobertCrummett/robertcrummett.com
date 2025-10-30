@@ -1,6 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
 	const projects = [
 		{
+			id: 'essay-ram-2025',
+			title: 'Why I Want A Career in the Minerals Industry',
+			conference: 'Creative Writing',
+			type: 'Essay',
+			dziPath: './assets/writing/essay-ram-2025.dzi',
+			pdfPath: './assets/writing/essay-ram-2025.pdf'
+		},
+		{
 			id: 'dcip-aegc-2025',
 			title: 'Optimized Ergodic Data Acquisition for Accelerated Gradient Array DCIP Surveys',
 			conference: 'Australiasian Exploration Geoscience Conference 2025',
