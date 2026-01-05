@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Notes</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
+		<link rel="manifest" href="../site.webmanifest">
+	</head>
+	<body>
+		<h3>Notes &mdash; Probability Theory &mdash; Algebras</h3>
+
+		<p>
+		A probability space (&Omega;,&#x1D49C;,&#x2119;) consists of three elements.
+		</p>
+
+		<p>
+		The first element is the <i>sample space</i> &Omega;. It
+		is the space of all possible events. The second
+		element is the <i>&sigma;-algebra</i>, &#x1D49C;. This is a
+		collection of combinations of events in the sample space. In a
+		sense, it is a set of sets. The final element is a function
+		&#x2119;, which assigns a value to every element in &#x1D49C;.
+		Each element of the probaility space deserves discussion.
+		This article is dedicated to properties of the &sigma;-algebra
+		&#x1D49C;.
+		</p>
+
+		<p>
+		Algebras are collections of sets of &Omega; satisfying three properties:
+		<ul>
+			<li>
+			&Omega; is a member of the algebra. That is,
+			the realization of all possible events is contained
+			in the algebra.
+			</li>
+			<li>
+			The algebra is closed under compliments. The
+			compliment (with respect to the set &Omega;) of any
+			element in the algebra will yield another element 
+			in the algebra.
+			</li>
+			<li>
+			The algebra is closed under <b>finite</b> unions.
+			</li>
+		</ul>
+		</p>
+
+		<p>
+		The last property is significant, because it is what distinguishes
+		any algebra on &Omega; from a <i>&sigma;-algebra</i> on &Omega;.
+		An algebra is called a &sigma;-algebra if it satisfies the
+		additional property:
+		<ul>
+			<li>
+			The algebra is closed under <b>countable</b> unions.
+			</li>
+		</ul>
+		This final restriction distinguishes &#x1D49C; from more general
+		algebras that could be formed on &Omega;.
+		</p>
+
+		<p>
+		The collection &#x1D49C; must be a &sigma;-algebra if the triple
+		(&Omega;,&#x1D49C;,&#x2119;) is to be a probability space. 
+		The following results about algebras apply to probability spaces:
+		</p>
+
+		<p>
+		<b>algebras contain &#x2205;</b><br>
+		All algebras contain the entire sample space &Omega;. All
+		algebras are also closed under compliment. Therefore, all
+		algebras contain the compliment of the entire sample space,
+		&Omega;<sup>c</sup>. This set is the empty set &#x2205;.
+		</p>
+
+		<p>
+		<b>algebras are closed under intersection</b><br>
+		Take a finite union of elements of an algebra. The set formed by
+		the union is in the contained in the algebra, because of closure under
+		finite unions. Call this set B. The compliment of this set B<sup>c</sup> is
+		also contained in &#x1D49C;, because of closure under compliments. By
+		<a href="https://en.wikipedia.org/wiki/De_Morgan%27s_laws">De Morgan's law</a>,
+		the compliment of a union of sets (i.e. B<sup>c</sup>) is equivalent to the
+		intersection of the compliments of the sets. This shows
+		that algebras are closed under finite intersections.
+		</p>
+
+		<p>
+		Since 
+		<a href="https://en.wikipedia.org/wiki/De_Morgan%27s_laws">De Morgan's law</a>
+		extends to countable unions, &sigma;-algebras can be said to be
+		closed under countably many intersections. Algebras can
+		generally only be said to be closed under finite intersections.
+		</p>
+
+		<p>
+		<b>algebras are closed under differences</b><br>
+		Set differences can be stated in terms of intersections, and the result follows.
+		</p>
+	</body>
+</html>
+
+				
