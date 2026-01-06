@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Blogging</title>
+		<title>Blogs</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
@@ -13,34 +13,54 @@
 		<h3>Exponential Integral for Radiometric Altitude Corrections Reviewed</h3>
 
 		<p>
-		Adjusting counts of airborne gamma-ray spectrometric
-		surveys to a consistent altitude is standard operating
-		proceedure in exploration geophysics. It is quite common to use
-		an exponential function to model the decay of gamma-quanta in
-		the atmosphere. The relationship between gamma quanta counts
-		and altitude AGL is <code>N = N_0 e^{-\mu x}</code>, where
-		<code>N_0</code> is the quanta count expected at ground level,
-		<code>N</code> is the quanta count expected at an elevation
-		<code>x</code>, and <code>\mu</code> is the linear attenutation
-		coefficient of air.
-		</p>
-		
-		<p style="text-align: center"><b>Standard Altitude Correction</b>&emsp;<code>N = N_0 e^{-\mu x}</code></p>
-
-		<p>
-		By this statement, higher one goes (<code>x</code> increases),
-		the less counts <code>N</code> will be measured. This is true
-		in the near surface envionment, where the gamma quanta density
-		is to first order a function of the near surface environment.
-		But at higher altitudes, where radiation is primarily of cosmic
-		origin, the opposite will be true. The cosmic background will
-		increase with elevation <code>x</code>, and the <b>standard altitude correction</b>
-		will be a poor model. But in exploration geophysics, the
-		<b>standard altitude correction</b> model is fantastic.
+		Adjusting counts of airborne gamma-ray spectrometric surveys to
+		a consistent altitude is standard operating proceedure in
+		exploration geophysics. In the lowest portion of the
+		atmosphere, gamma-quanta counts decay nearly exponentially with
+		alititude. To prevent the altitude of the survey platform from
+		influencing the interpretation of the total counts, or from
+		biasing the ground concentrations counts will be converted
+		into, we do our best to adjust the measured signal to a common
+		altitude. Ideally this will give relatively equal weight to the
+		counts at each sample location.
 		</p>
 
 		<p>
-		Who then controls the fate of the universe?
+		How do we adjust the gamma-quanta counts measured at various altitudes
+		to a common altitude? Well, very early on physicists observed that in the
+		near surface environment, to first order gamma-quanta counts decay
+		exponentially with distance from the ground. By observing quanta counts
+		at various altitudes above a common source, we can estimate the sensitivity
+		of the counts to altitude using an exponential function:
+		</p>
+ 		
+		<?-- Equation one -->
+		<table width="100%">
+			<tr>
+		    	<td width="33%"><b>Eq. 1</b></td>
+		    	<td width="34%" align="center">N = N<sub>0</sub> e<sup>-&mu;x</sup>,</td>
+		    	<td width="33%"></td>
+			</tr>
+		</table>
+
+		<p>
+		where N is the counts at altitude x, N<sub>0</sub> is the counts at ground level, and
+		&mu; is called the linear attenuation coefficient of air.
+		</p>
+
+		<p>
+		This model for altitude corrections is simple and effective. Notice just how simple it is.
+		There are only two hyperparameters: N<sub>0</sub> and &mu;. And just these two parameters do
+		a nice job desribing a difficult problem: transport of high frequency photons through
+		the lower atmosphere.
+		</p>
+
+		<p>
+		The first parameter N<sub>0</sub> is the gamma-quanta counts at ground level. This can be measured in the
+		field, or estimated based on various flight heights. It usually needs to be estimated, as will be pointed out later.
+		The second paramter &mu; is almost always estimated. Thus the sensitivity of quanta counts to attenuation
+		in the atmosphere can be turned into a two parameter optimization problem. In log-space, this could
+		natually be posed as a <i>linear</i> overdetermined least-squares problem for log(N<sub>0</sub>) and &mu;.
 		</p>
 
 		<p><a
