@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Notes</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
+		<link rel="manifest" href="../site.webmanifest">
+	</head>
+	<body>
+		<h3>Convex Functions</h3>
+
+		<p>
+		In preparation for a post about the gamma function, I thought
+		it would be fitting to first review <i>convex functions</i> and
+		their properties. First, a definition.
+		</p>
+	
+		<p>        <?-- Definition of a convex function -->
+		<b>
+		A function is convex if and only if the function is less than
+		or equal to a straight line between any two points in its
+		domain.
+		</b>
+		</p>
+
+		<p>
+		In other words, convex functions are bowl shaped in between any
+		two points, such that if a straight line were drawn in between
+		these two points, the function would never cross the line. This
+		definition is good for functions that map to the real numbers
+		&#x211D;.
+		</p>
+
+		<p>
+		A function that maps to the extended real numbers (i.e. the
+		real numbers and plus infinity and negative infinity) can also
+		be convex. But one has to be careful about the points selected.
+		</p>
+
+		<p>
+		First of all, the line joining two points along the function
+		can get us into trouble. The easiest way to define a line
+		between two points is to use a parameterization. But if the
+		parameterization variable is zero, then we could potentially
+		multiply infinity by zero! This is undefined behavior. The
+		remedy is to exclude the two end points from the definition of
+		convexity &mdash; so convexity is defined on the open set
+		between any two points of a function. The two points will form
+		a set of measure zero, so we do not get into too much trouble
+		doing this.
+		</p>
+
+		<p>
+		The second issue is the addition in the parameterization,
+		because the sum of positive infinity and negative infinity is
+		undefined. To remedy this, we permit the function that maps to
+		the extended real numbers is not allowed to take both positive
+		<b>and</b> negative infinity as values. Take your pick, only
+		one is usually allowed.
+		</p>
+
+		<p>
+		Sometimes, people emphasize whether or not the convex function
+		ever touches the bounding line. Recall, a convex function is
+		defined as a function less than <i>or equal to</i> a line
+		joining any two points along the function. If the function is
+		never equal to the straight line, then the function is a
+		<i>strictly-convex</i> function.
+		</p>
+
+		<h4>Properties</h4>
+
+		<p>
+		Convexity is a powerful property, and much can be said about
+		convex functions. I will cover some basic results about convex
+		functions that are useful to know.
+		</p>
+
+		<p>
+		<b>The sum of convex functions is a convex function.</b><br>
+		This is intuitive. Two bowl shaped functions, when summed, will
+		still appear to be bowl shaped.
+		</p>
+
+		<p>
+		<b>The limit of a convergent sequence of convex functions is a convex function.</b><br>
+		This is merely the limiting case of the previous argument.
+		</p>
+
+		<p>
+		<b>The limit of a convergent series of convex functions is a convex function.</b><br>
+		Each partial sum of the series will be a convex function. Since
+		the limit of the series is defined as the limit of the sequence of
+		partial sums, the series will converge to a convex function.
+		</p>
+
+		<p>
+		<b>A function is convex if and only if the function has monotonically increasing one-sided derivatives.</b><br>
+		A convex function's derivatives can only go up or stay
+		constant. If the derivatives ever got smaller, then there would
+		be a location where we could fit a line under the function.
+		This result is often stated a little more loosely: a function
+		is convex if an only if its second derivative, or curvature, is
+		greater than or equal to zero.
+		</p>
+
+		<p>
+		<b>A minimum of a convex function is the global minimum.</b><br>
+		Think bowl shaped. There can only be one bottom.
+		</p>
+
+		<p>
+		<b>Jensen's inequality applies to every convex function.</b><br>
+		Jensen's inequality says that the value of a convex function at
+		an integral will be less than or equal to the integral of the
+		convex function. This statement is a generalization of the
+		definition of a convex function &mdash; that is, that the
+		function will live below a straight line joining two points. So
+		we can change what it means to measure some function, but we do
+		not have to leave behind the ideas of convexity.
+		</p>
+
+		<p>
+		<b>A constant function is convex.</b><br>
+		</p>
+	</body>
+</html>
