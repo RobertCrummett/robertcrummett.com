@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Writing</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="apple-touch-icon" sizes="180x180" href="../icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="../icons/favicon-16x16.png">
+		<link rel="manifest" href="../site.webmanifest">
+	</head>
+	<body>
+        <h3>Probability Theory &mdash; Convergence</h3>
+        <p>
+        When we intend to say a sequence of random variables converges,
+        it is important to specify in what manner they converge. Here I
+        will describe <b>some</b> of the different types of convergence.
+        Recall a random variable is hosted in a probability space
+        (&Omega;, &#x1D49C;, &#x2119;).
+        </p>
+        <hr>
+
+        <h4>Modes of Convergence</h4>
+        <p>
+        <b>Pointwise convergence.</b><br>
+        For each point in the space &Omega;, a sequence of random variables
+        X<sub>n</sub> will converge to a random variable X. Or in other words,
+        for every &omega; in &Omega;, the sequence X<sub>n</sub>(&omega;)
+        approaches X(&omega;).
+        </p>
+
+        <p>
+        Although point-wise convergence is intuitive, it is not very useful
+        for probability theory. Because equality in probability theory is
+        almost always defined <i>almost surely</i>, the strict equality is
+        too strong a requirement to meet. In practice, point-wise convergence
+        is not often used.
+        </p>
+
+        <p>
+        <b>Almost sure convergence.</b><br>
+        This is a way of saying that the probability that the sequence
+        X<sub>n</sub> approaches X is almost certain, or has a probability
+        equal to one. In math speak, we can write this as
+        &#x2119;(X<sub>n</sub> approaches X) = 1.
+        </p>
+
+        <p>
+        This mode of convergence can be written in another way as well,
+        which is analogous to the definition of point-wise convergence.
+        Let F be a set in &#x1D49C; such that &#x2119;(F) = 1. Then
+        a sequence converges almost surely if and only if
+        X<sub>n</sub>(&omega;) approaches X(&omega;) for all &omega;
+        contained in F.
+        </p>
+
+        <p>
+        This is the strongest mode of convergence listed here. We will
+        see that it is useful in probability theory, because it allows
+        us to neglect sets of measure zero.
+        </p>
+
+        <p>
+        <b>Convergence in probability.</b><br>
+        In this mode of convergence, random variables become arbitrarily
+        close to one another, such that the probability of them being
+        a certain non-zero distance from one another is zero. This
+        can be written as &#x2119;(|X<sub>n</sub> - X| greater than &epsilon;)
+        = 0 for all &epsilon; greater than 0.
+        </p>
+
+        <p>
+        <b>Convergence in L<sup>r</sup>.</b><br>
+        This is reminciant of convergence in probability, but instead of
+        using the probability measure we use the expectation of the
+        r<sup>th</sup> moment to determine when random variables draw
+        near eachother. The expectation is denoted &#x1d53c;, and this mode
+        of convergence is written: &#x1d53c;(|X<sub>n</sub> - X|<sup>r</sup>) = 0
+        for some fixed r.
+        </p>
+
+        <p>
+        <b>Convergence in distribution (or weakly).</b><br>
+        This is when the distribution functions, or cumulative distribution
+        functions, are equal to eachother in the limit. This is written
+        as lim<sub>n</sub>F<sub>n</sub>(x) = F(x) for all x
+        <i>where F is continuous</i>. Note the condition in the last part
+        &mdash; it is easy to forget.
+        </p>
+
+        <p>
+        This is the weakest of all the modes of convergence, hence the
+        alternative name <i>convergence weakly</i>.
+        </p>
+    </body>
+</html>
