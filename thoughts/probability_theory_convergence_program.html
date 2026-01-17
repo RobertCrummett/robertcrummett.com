@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Writing</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="apple-touch-icon" sizes="180x180" href="../icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="../icons/favicon-16x16.png">
+		<link rel="manifest" href="../site.webmanifest">
+	</head>
+	<body>
+		<h3>Probability Theory &mdash; Convergence Program</h3>
+
+		<p>
+		Here we write a simple program that demonstrates that a sequence
+		of random variables converging in probability will demonstrate
+		<i>practical</i> differences, when compared to a sequence that
+		converges almost surely. This post was inspired by a lecture given
+		Dr. Luis Tenorio in mathematical statistics on January 14<sup>th</sup>,
+		2026.
+		</p>
+
+		<hr>
+
+		<p>
+		Sequences of random variables that converge in probability and
+		sequences of random variables that converge almost surely are
+		practically distinguishable. We can tell them apart simply by
+		looking at the sequences for long enough.
+		</p>
+
+		<p>
+		The following program will output <code>n</code> random
+		variable's from a sequence that converges in probability, but
+		not almost surely. If the output is redirected to a plotting
+		application, one will see for large values <code>n</code>, the
+		function <code>random_sequence(n)</code> will still
+		occasionally return non-zero values that increase in size.
+		</p>
+
+		<p>
+		If the function converged in probability to zero, eventually
+		the values of the function would be bounded above after some
+		index <code>n</code>. Clearly this is not the case for random
+		sequences that converge in probability. The practical
+		difference in these sequences is the "spikes" in the values of
+		the sequence.
+		</p>
+
+		<hr>
+
+		<code>
+			#include &lt;stdio.h&gt;<br>
+		typedef unsigned long long uint; /* 64-bit integer. */<br><br>
+		/* Xorshift pseudo random number generator. */<br>
+		static uint x = 0x94D34A34EC98EEF3; /* Seed value. */<br>
+		uint rand(void) {<br>
+		&#160;&#160;&#160;&#160;return x = (x ^= ((x ^= ((x ^= (x &lt;&lt; 13)) &gt;&gt; 7)) &lt;&lt; 17));<br>
+		}<br><br>
+		/* Standard uniform distribution. */<br>
+		double uniform(void) {<br>
+		&#160;&#160;&#160;&#160;return (double)rand() / 0xFFFFFFFFFFFFFFFF;<br>
+		}<br><br>
+		/* A random sequence that converges in probability,<br>
+		&#160;* but will not converge almost surely. */<br>
+		uint random_sequence(uint n) {<br>
+		&#160;&#160;&#160;&#160;return uniform() &lt; 1.0 / n ? n : 0;<br>
+		}<br><br>
+		int main(void) {<br>
+		&#160;&#160;&#160;&#160;const uint n = 10000; /* Length of sequence to observe. */<br><br>
+		&#160;&#160;&#160;&#160;/* Even for very large values of n, there will still be<br>
+		&#160;&#160;&#160;&#160;&#160;* &quot;spikes&quot;. If this random sequence converged almost<br>
+		&#160;&#160;&#160;&#160;&#160;* surely, these spikes would not happen. */<br>
+		&#160;&#160;&#160;&#160;for (uint i = 0; i &lt; n; i++) {<br>
+		&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;printf(&quot;%llu\n&quot;, random_sequence(i));<br>
+		&#160;&#160;&#160;&#160;}<br><br>
+		&#160;&#160;&#160;&#160;return 0;<br>
+		}
+		</code>
+    	</body>
+</html>
