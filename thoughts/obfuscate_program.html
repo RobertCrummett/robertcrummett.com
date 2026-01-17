@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Writing</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="apple-touch-icon" sizes="180x180" href="../icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="../icons/favicon-16x16.png">
+		<link rel="manifest" href="../site.webmanifest">
+	</head>
+	<body>
+		<h3>Obfuscate Program</h3>
+
+        <p>
+        The following program will replace characters in text files that may not display correctly
+        in HTML files. I wrote it to make including code snippets in my website easier. In vim, you
+        can read in the output of this command to the current line with the command
+        <code>r!obfuscate.exe &lt;input&gt;</code>.  The text file <code>&lt;input&gt;</code> will
+        be printed (escaped) under the cursor location.
+        </p>
+
+        <hr>
+        <p><b>Program <code>obfuscate.cpp</code></b></p>
+
+		<code>
+		/*&nbsp;Escape&nbsp;characters&nbsp;in&nbsp;text&nbsp;files&nbsp;for&nbsp;HTML&nbsp;dislpay.<br>
+		&nbsp;*&nbsp;INTEL&nbsp;&nbsp;icx&nbsp;obfuscate.cpp&nbsp;/Qstd:c++23&nbsp;<br>
+		&nbsp;*&nbsp;GNU&nbsp;&nbsp;&nbsp;&nbsp;g++&nbsp;obfuscate.cpp&nbsp;-std=c++23&nbsp;&nbsp;*/<br>
+		#include&nbsp;&lt;fstream&gt;<br>
+		#include&nbsp;&lt;iostream&gt;<br>
+		#include&nbsp;&lt;print&gt;<br>
+		#include&nbsp;&lt;regex&gt;<br>
+		#include&nbsp;&lt;string&gt;<br>
+		<br>
+		int&nbsp;main(int&nbsp;argc,&nbsp;char&nbsp;**argv)&nbsp;{<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(argc&nbsp;!=&nbsp;2)&nbsp;{<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::print(std::cerr,&nbsp;"ERROR:&nbsp;Incorrect&nbsp;number&nbsp;of&nbsp;parameters.\n");<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::print(std::cerr,&nbsp;"USAGE:&nbsp;{}&nbsp;&lt;input_file&gt;\n",&nbsp;argv[0]);<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;1;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+		<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;The&nbsp;first&nbsp;argument&nbsp;is&nbsp;a&nbsp;path&nbsp;to&nbsp;a&nbsp;text&nbsp;file&nbsp;that&nbsp;we&nbsp;will&nbsp;convert&nbsp;to&nbsp;html&nbsp;format.&nbsp;*/<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;std::ifstream&nbsp;in(argv[1],&nbsp;std::ios::binary);<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!in)&nbsp;{<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::print(std::cerr,&nbsp;"ERROR:&nbsp;Failed&nbsp;to&nbsp;open&nbsp;file:&nbsp;{}\n",&nbsp;argv[1]);<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;1;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+		<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;Read&nbsp;the&nbsp;entire&nbsp;file&nbsp;into&nbsp;a&nbsp;string.&nbsp;*/<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;std::string&nbsp;s((std::istreambuf_iterator&lt;char&gt;(in)),&nbsp;std::istreambuf_iterator&lt;char&gt;());<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(in.bad())&nbsp;{<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::print(std::cerr,&nbsp;"ERROR:&nbsp;Opened&nbsp;{}&nbsp;but&nbsp;failed&nbsp;to&nbsp;read&nbsp;content.\n",&nbsp;argv[1]);<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;1;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+		<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;Format&nbsp;text&nbsp;such&nbsp;that&nbsp;it&nbsp;will&nbsp;display&nbsp;nicely&nbsp;in&nbsp;HTML.&nbsp;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Note&nbsp;that&nbsp;order&nbsp;of&nbsp;operations&nbsp;below&nbsp;matters.&nbsp;If&nbsp;&amp;amp;&nbsp;replacement<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;happend&nbsp;after,&nbsp;say,&nbsp;&amp;lt;&nbsp;replacement,&nbsp;then&nbsp;the&nbsp;&amp;&nbsp;in&nbsp;&amp;lt;&nbsp;will&nbsp;be<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;replaced.&nbsp;Similar&nbsp;story&nbsp;for&nbsp;\r&nbsp;or&nbsp;&lt;br&gt;.&nbsp;Beware!&nbsp;*/<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;=&nbsp;std::regex_replace(s,&nbsp;std::regex("&amp;"),&nbsp;"&amp;amp;");<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;=&nbsp;std::regex_replace(s,&nbsp;std::regex("&lt;"),&nbsp;"&amp;lt;");<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;=&nbsp;std::regex_replace(s,&nbsp;std::regex("&gt;"),&nbsp;"&amp;gt;");<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;=&nbsp;std::regex_replace(s,&nbsp;std::regex("\r"),&nbsp;"");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;Just&nbsp;cause&nbsp;Windows...&nbsp;*/<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;=&nbsp;std::regex_replace(s,&nbsp;std::regex("\n"),&nbsp;"&lt;br&gt;\n");<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;=&nbsp;std::regex_replace(s,&nbsp;std::regex("\t"),&nbsp;"&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;");<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;=&nbsp;std::regex_replace(s,&nbsp;std::regex("&nbsp;"),&nbsp;"&amp;nbsp;");<br>
+		<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;std::print("&lt;code&gt;\n{}&lt;/code&gt;",&nbsp;s);<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+		}<br>
+		</code>
+
+        <hr>
+        <p><b>Output of <code>obfuscate.exe obfuscate.cpp</code></b></p>
+
+        <code>
+        /*&amp;nbsp;Escape&amp;nbsp;characters&amp;nbsp;in&amp;nbsp;text&amp;nbsp;files&amp;nbsp;for&amp;nbsp;HTML&amp;nbsp;dislpay.&lt;br&gt;<br>
+        &amp;nbsp;*&amp;nbsp;INTEL&amp;nbsp;&amp;nbsp;icx&amp;nbsp;obfuscate.cpp&amp;nbsp;/Qstd:c++23&amp;nbsp;&lt;br&gt;<br>
+        &amp;nbsp;*&amp;nbsp;GNU&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;g++&amp;nbsp;obfuscate.cpp&amp;nbsp;-std=c++23&amp;nbsp;&amp;nbsp;*/&lt;br&gt;<br>
+        #include&amp;nbsp;&amp;lt;fstream&amp;gt;&lt;br&gt;<br>
+        #include&amp;nbsp;&amp;lt;iostream&amp;gt;&lt;br&gt;<br>
+        #include&amp;nbsp;&amp;lt;print&amp;gt;&lt;br&gt;<br>
+        #include&amp;nbsp;&amp;lt;regex&amp;gt;&lt;br&gt;<br>
+        #include&amp;nbsp;&amp;lt;string&amp;gt;&lt;br&gt;<br>
+        &lt;br&gt;<br>
+        int&amp;nbsp;main(int&amp;nbsp;argc,&amp;nbsp;char&amp;nbsp;**argv)&amp;nbsp;{&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;if&amp;nbsp;(argc&amp;nbsp;!=&amp;nbsp;2)&amp;nbsp;{&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;std::print(std::cerr,&amp;nbsp;"ERROR:&amp;nbsp;Incorrect&amp;nbsp;number&amp;nbsp;of&amp;nbsp;parameters.\n");&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;std::print(std::cerr,&amp;nbsp;"USAGE:&amp;nbsp;{}&amp;nbsp;&amp;lt;input_file&amp;gt;\n",&amp;nbsp;argv[0]);&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return&amp;nbsp;1;&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;}&lt;br&gt;<br>
+        &lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;/*&amp;nbsp;The&amp;nbsp;first&amp;nbsp;argument&amp;nbsp;is&amp;nbsp;a&amp;nbsp;path&amp;nbsp;to&amp;nbsp;a&amp;nbsp;text&amp;nbsp;file&amp;nbsp;that&amp;nbsp;we&amp;nbsp;will&amp;nbsp;convert&amp;nbsp;to&amp;nbsp;html&amp;nbsp;format.&amp;nbsp;*/&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;std::ifstream&amp;nbsp;in(argv[1],&amp;nbsp;std::ios::binary);&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;if&amp;nbsp;(!in)&amp;nbsp;{&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;std::print(std::cerr,&amp;nbsp;"ERROR:&amp;nbsp;Failed&amp;nbsp;to&amp;nbsp;open&amp;nbsp;file:&amp;nbsp;{}\n",&amp;nbsp;argv[1]);&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return&amp;nbsp;1;&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;}&lt;br&gt;<br>
+        &lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;/*&amp;nbsp;Read&amp;nbsp;the&amp;nbsp;entire&amp;nbsp;file&amp;nbsp;into&amp;nbsp;a&amp;nbsp;string.&amp;nbsp;*/&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;std::string&amp;nbsp;s((std::istreambuf_iterator&amp;lt;char&amp;gt;(in)),&amp;nbsp;std::istreambuf_iterator&amp;lt;char&amp;gt;());&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;if&amp;nbsp;(in.bad())&amp;nbsp;{&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;std::print(std::cerr,&amp;nbsp;"ERROR:&amp;nbsp;Opened&amp;nbsp;{}&amp;nbsp;but&amp;nbsp;failed&amp;nbsp;to&amp;nbsp;read&amp;nbsp;content.\n",&amp;nbsp;argv[1]);&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return&amp;nbsp;1;&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;}&lt;br&gt;<br>
+        &lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;/*&amp;nbsp;Format&amp;nbsp;text&amp;nbsp;such&amp;nbsp;that&amp;nbsp;it&amp;nbsp;will&amp;nbsp;display&amp;nbsp;nicely&amp;nbsp;in&amp;nbsp;HTML.&amp;nbsp;&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;*&amp;nbsp;Note&amp;nbsp;that&amp;nbsp;order&amp;nbsp;of&amp;nbsp;operations&amp;nbsp;below&amp;nbsp;matters.&amp;nbsp;If&amp;nbsp;&amp;amp;amp;&amp;nbsp;replacement&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;*&amp;nbsp;happend&amp;nbsp;after,&amp;nbsp;say,&amp;nbsp;&amp;amp;lt;&amp;nbsp;replacement,&amp;nbsp;then&amp;nbsp;the&amp;nbsp;&amp;amp;&amp;nbsp;in&amp;nbsp;&amp;amp;lt;&amp;nbsp;will&amp;nbsp;be&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;*&amp;nbsp;replaced.&amp;nbsp;Similar&amp;nbsp;story&amp;nbsp;for&amp;nbsp;\r&amp;nbsp;or&amp;nbsp;&amp;lt;br&amp;gt;.&amp;nbsp;Beware!&amp;nbsp;*/&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;s&amp;nbsp;=&amp;nbsp;std::regex_replace(s,&amp;nbsp;std::regex("&amp;amp;"),&amp;nbsp;"&amp;amp;amp;");&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;s&amp;nbsp;=&amp;nbsp;std::regex_replace(s,&amp;nbsp;std::regex("&amp;lt;"),&amp;nbsp;"&amp;amp;lt;");&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;s&amp;nbsp;=&amp;nbsp;std::regex_replace(s,&amp;nbsp;std::regex("&amp;gt;"),&amp;nbsp;"&amp;amp;gt;");&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;s&amp;nbsp;=&amp;nbsp;std::regex_replace(s,&amp;nbsp;std::regex("\r"),&amp;nbsp;"");&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;/*&amp;nbsp;Just&amp;nbsp;cause&amp;nbsp;Windows...&amp;nbsp;*/&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;s&amp;nbsp;=&amp;nbsp;std::regex_replace(s,&amp;nbsp;std::regex("\n"),&amp;nbsp;"&amp;lt;br&amp;gt;\n");&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;s&amp;nbsp;=&amp;nbsp;std::regex_replace(s,&amp;nbsp;std::regex("\t"),&amp;nbsp;"&amp;amp;nbsp;&amp;amp;nbsp;&amp;amp;nbsp;&amp;amp;nbsp;");&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;s&amp;nbsp;=&amp;nbsp;std::regex_replace(s,&amp;nbsp;std::regex("&amp;nbsp;"),&amp;nbsp;"&amp;amp;nbsp;");&lt;br&gt;<br>
+        &lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;std::print("&amp;lt;code&amp;gt;\n{}&amp;lt;/code&amp;gt;",&amp;nbsp;s);&lt;br&gt;<br>
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return&amp;nbsp;0;&lt;br&gt;<br>
+        }&lt;br&gt;<br>
+        </code>
+
+    	</body>
+</html>
