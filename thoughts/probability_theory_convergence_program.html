@@ -51,7 +51,7 @@
 		<hr>
 
 		<code>
-			#include &lt;stdio.h&gt;<br>
+		#include &lt;stdio.h&gt;<br>
 		typedef unsigned long long uint; /* 64-bit integer. */<br><br>
 		/* Xorshift pseudo random number generator. */<br>
 		static uint x = 0x94D34A34EC98EEF3; /* Seed value. */<br>
@@ -72,7 +72,7 @@
 		&#160;&#160;&#160;&#160;/* Even for very large values of n, there will still be<br>
 		&#160;&#160;&#160;&#160;&#160;* &quot;spikes&quot;. If this random sequence converged almost<br>
 		&#160;&#160;&#160;&#160;&#160;* surely, these spikes would not happen. */<br>
-		&#160;&#160;&#160;&#160;for (uint i = 0; i &lt; n; i++) {<br>
+		&#160;&#160;&#160;&#160;for (uint i = 1; i &lt; n; i++) {<br>
 		&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;printf(&quot;%llu\n&quot;, random_sequence(i));<br>
 		&#160;&#160;&#160;&#160;}<br><br>
 		&#160;&#160;&#160;&#160;return 0;<br>
